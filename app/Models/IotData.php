@@ -20,5 +20,6 @@ class IotData extends Model
         'kipas_menyala',
         'kran_terbuka',
         'status_air',
+        'status_pakan_ayam',
     ];
 }

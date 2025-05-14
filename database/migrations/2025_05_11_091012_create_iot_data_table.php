@@ -18,6 +18,7 @@ class CreateIotDataTable extends Migration
             $table->boolean('kipas_menyala');
             $table->boolean('kran_terbuka');
             $table->string('status_air');
+            $table->float('status_pakan_ayam');
             $table->timestamps();
         });
     }

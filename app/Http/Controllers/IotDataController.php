@@ -1,6 +1,4 @@
 <?php
-
-// app/Http/Controllers/IotDataController.php
 namespace App\Http\Controllers;
 
 use App\Models\IotData;
@@ -11,7 +9,7 @@ class IotDataController extends Controller
     public function index()
     {
         $data = IotData::latest()->first();
-        return view('iot.index', compact('data'));
+        return view('layouts.table', compact('data'));
     }
 
     public function store(Request $request)
@@ -25,6 +23,7 @@ class IotDataController extends Controller
             'kipas_menyala' => 'required|boolean',
             'kran_terbuka' => 'required|boolean',
             'status_air' => 'required|string',
+            'status_pakan_ayam' => 'required|numeric',
         ]);
 
         IotData::create($request->all());

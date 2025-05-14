@@ -1,3 +1,20 @@
+/* === Layout Fix for Sticky Footer === */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* === Main Content Area === */
+main {
+    flex: 1;
+}
+
 /* === Global Styles === */
 body {
     background-color: rgb(161, 161, 143);
@@ -26,7 +43,6 @@ img {
 .nav-link:hover {
     text-decoration: underline;
 }
-
 
 /* === Dashboard Card Styles === */
 .dashboard-box {
@@ -66,4 +82,27 @@ img {
     max-width: 100%;
     max-height: 150px;
     object-fit: contain;
+}
+
+.custom-table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.custom-table thead th {
+    background: #343a40;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    border-radius: 0.5rem;
 }

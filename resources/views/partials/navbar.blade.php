@@ -16,6 +16,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/dokumentasi">Dokumentasi</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ route('tabel.pakan') }}">Tabel Pakan</a>
+                </li>
             </ul>
 
             {{-- Logout Button --}}

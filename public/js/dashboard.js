@@ -13,8 +13,7 @@ function fetchAndUpdateData() {
             document.getElementById("suhu-value").innerText = suhuValue + " °C";
 
             animateChartValue("kelembapanChart", kelembapanValue);
-            document.getElementById("kelembapan-value").innerText =
-                kelembapanValue + " %";
+            document.getElementById("kelembapan-value").innerText = kelembapanValue + " %";
 
             animateChartValue("tinggiAirChart", tinggiAir);
 
@@ -22,9 +21,70 @@ function fetchAndUpdateData() {
             updateFanStatus(fanStatus);
             updateKranStatus(kranStatus);
         })
-        .catch((error) => console.error("Gagal memuat data realtime:", error));
+        .catch((error) => console.error("Gagal memuat data grafik:", error));
 }
 
+function fetchAndUpdateTable() {
+    fetch("/api/get-iot")
+        .then((res) => res.json())
+        .then((data) => {
+            if (!data) return;
+
+            const html = `
+                <tr>
+                    <td>${data.suhu}</td>
+                    <td>${renderStatusSuhu(data.suhu)}</td>
+                    <td>${data.persentase_air}%</td>
+                    <td>${renderStatusAir(data.persentase_air)}</td>
+                    <td>${data.kelembapan}%</td>
+                    <td>${renderStatusKelembapan(data.kelembapan)}</td>
+                    <td>${data.status_pakan_ayam}kg</td>
+                    <td>${renderStatusPakan(data.status_pakan_ayam)}</td>
+                    <td>${new Date(data.created_at).toLocaleString('id-ID')}</td>
+                </tr>
+            `;
+
+            const tableBody = document.getElementById("realtime-table");
+
+            // Tambahkan baris baru ke bawah
+            tableBody.insertAdjacentHTML("beforeend", html);
+
+            // Batasi jumlah baris hanya 10
+            const rows = tableBody.querySelectorAll("tr");
+            if (rows.length > 12) {
+                // Hapus baris paling atas (terlama)
+                tableBody.removeChild(rows[0]);
+            }
+        })
+        .catch((err) => console.error("Gagal fetch data tabel:", err));
+}
+
+// --- Reusable Status Renderers ---
+function renderStatusSuhu(suhu) {
+    if (suhu < 21) return `<span class="badge bg-primary">Dingin</span>`;
+    if (suhu > 30) return `<span class="badge bg-warning text-dark">Hangat</span>`;
+    return `<span class="badge bg-success">Normal</span>`;
+}
+
+function renderStatusAir(persen) {
+    return persen <= 0
+        ? `<span class="badge bg-danger">Air Pakan Kosong</span>`
+        : `<span class="badge bg-success">Air Terisi</span>`;
+}
+
+function renderStatusKelembapan(kelembapan) {
+    return kelembapan > 90
+        ? `<span class="badge bg-warning text-dark">Sangat Lembab</span>`
+        : `<span class="badge bg-success">Normal</span>`;
+}
+
+function renderStatusPakan(pakan) {
+    return pakan <= 0
+        ? `<span class="badge bg-warning text-dark">Kosong</span>`
+        : `<span class="badge bg-success">Terisi</span>`;
+}
+
+// --- Animation + Status Update Helpers ---
 function animateChartValue(chartId, newValue, duration = 500) {
     const chart = FusionCharts.items[chartId];
     if (!chart) return;
@@ -88,6 +148,7 @@ function updateKranStatus(status) {
     }
 }
 
+// --- FusionCharts Init + Realtime Loop ---
 FusionCharts.ready(function () {
     new FusionCharts({
         id: "suhuChart",
@@ -157,6 +218,9 @@ FusionCharts.ready(function () {
         },
     }).render();
 
+    // Call both functions periodically
     fetchAndUpdateData();
-    setInterval(fetchAndUpdateData, 2000);
+    fetchAndUpdateTable();
+    setInterval(fetchAndUpdateData, 2000);  // grafik setiap 2 detik
+    setInterval(fetchAndUpdateTable, 3000); // tabel setiap 3 detik
 });
